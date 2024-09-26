@@ -32,11 +32,7 @@ export default function App() {
 
 const ChildComponent = ({ count, increment }: any) => {
   console.log(":: render");
-  return (
-    <>
-      <div>Child component {count}</div>
-    </>
-  );
+  return <div>Child component {count}</div>;
 };
 ```
 
