@@ -348,12 +348,12 @@ myEventEmitter.emit('greet', 'Bob'); // No output
    - если они не совпадают, переверните их обратно.
 5. Кнопка перезапуска должна перезапустить игру.
 
-[Архив](resources/memory-game/Task.zip)
+[Архив](resources/memory-game/Task.zip) (Чтобы скачать файл, нажмите ... справа сверху -> Download)
 
 <details>
   <summary>Решение</summary>
 
-  [Итоговый архив](resources/memory-game/Result.zip)
+  [Итоговый архив](resources/memory-game/Result.zip) (Чтобы скачать файл, нажмите ... справа сверху -> Download)
 </details>
 
  ---
