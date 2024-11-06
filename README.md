@@ -4,5 +4,6 @@
 
 
 [Алгоритмы](algorithms.md)  
+[Рекурсия](recursion.md)  
 [Работа со строками](strings.md)  
 [React](react.md)  
