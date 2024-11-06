@@ -3,6 +3,7 @@
 Задачи для подготовки к собеседования на Middle и Senior Frontend Developer
 
 [Event Loop](eventloop.md)  
+[Promise](promise.md)  
 [Алгоритмы](algorithms.md)  
 [Рекурсия](recursion.md)  
 [Работа со строками](strings.md)  
