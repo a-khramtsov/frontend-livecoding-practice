@@ -397,7 +397,81 @@ console.log(deepthStorage);
  ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
- 
+### ✅ 📹 Задача
+[Видеобъяснение](https://t.me/c/2062644132/983/1829)
+
+Преобразовать объект бесконечной вложенности в плоскую структуру (сделать flatMap)
+
+```ts
+
+const result = {
+  'z': 'QQQ',
+  'a.b.c.d.e': 'QWERTY',
+  'q.z.u.o': 'qqq'
+}
+
+const initial = {
+  z: 'QQQ',
+  a: {
+    b: {
+      c: {
+        d: {
+          e: 'QWERTY',
+        },
+      },
+    },
+  },
+  q: {
+    z: {
+      u: {
+        o: 'QWEEE',
+      },
+    },
+  },
+};
+
+const flatObject = (obj) => {
+  
+};
+
+console.log(flatObject(initial));
+```
+
+<details>
+<summary>Решение</summary>
+
+ ```ts
+const flatObject = (obj, previousPath = '') => {
+  let result = {};
+  for (let key in obj) {
+    let newKey = '';
+    if (previousPath) {
+      newKey = previousPath + '.' + key;
+    } else {
+      newKey = key;
+    }
+
+    if (typeof obj[key] === 'object') {
+      const flattedObject = flatObject(obj[key], newKey);
+
+      result = {
+        ...result,
+        ...flattedObject,
+      };
+    } else {
+      result[newKey] = obj[key];
+    }
+  }
+
+  return result;
+};
+```
+</details>
+
+  ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
 ### Задача
  <!-- [Видеобъяснение]() -->
 
