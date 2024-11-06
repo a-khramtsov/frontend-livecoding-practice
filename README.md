@@ -18,6 +18,7 @@
 🟢 [Алгоритмы](algorithms.md)  
 🟢 [Работа со строками](strings.md)  
 🟢 [TypeScript](typescript.md)  
+🟢 [HTML](html.md)  
 
 ## Об авторе
 [Написать лично @a_khramtsov](https://t.me/a_khramtsov)  
