@@ -12,14 +12,14 @@
 🔴 [Event Loop](eventloop.md)   
 🔴 [Promise](promise.md)   
 🔴 [Контекст и классы](context.md)  
-🟠 [Задачи, приближенные к реальной жизни](real-tasks.md)  
-🟠 [Замкание](closure.md)  
+🟠 [Задачи, приближенные к реальной работе](real-tasks.md)  
+🟠 [Замыкание](closure.md)  
 🟠 [Рекурсия](recursion.md)  
 🟢 [Алгоритмы](algorithms.md)  
 🟢 [Работа со строками](strings.md)  
 🟢 [TypeScript](typescript.md)  
 🟢 [HTML](html.md)  
-🟢 [Нюасы языка](trics.md)    
+🟢 [Нюансы языка](trics.md)    
 
 ## Об авторе
 [Написать лично @a_khramtsov](https://t.me/a_khramtsov)  
