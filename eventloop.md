@@ -185,3 +185,121 @@ E
 
  ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+### Задача
+
+Что будет выведено в консоль?
+
+```ts
+setTimeout(function timeout() {
+    console.log(1);
+}, 0);
+
+let p = new Promise(function(resolve, reject) {
+    console.log(2);
+    resolve();
+});
+
+p.then(function(){
+    console.log(3);
+});
+
+console.log(4);
+
+```
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+
+### Задача
+
+Что будет выведено в консоль?
+
+```ts
+
+async function f() {
+    console.log(1);
+    
+    const promise = new Promise((resolve) => {
+        console.log(2);
+        setTimeout(() => {
+            console.log(3);
+            resolve('готово!');
+            console.log(4);
+        });
+    });
+    
+    console.log(5);
+
+    const result = await promise;
+    console.log(6);
+    console.log(result);
+    
+    return 'Result';
+}
+
+f();
+console.log(7);
+
+
+```
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+### Задача
+
+Что будет выведено и почему?
+
+```ts
+var p1 = new Promise(function(resolve, reject) {
+    console.log(5);
+    setTimeout(resolve, 500, "1");
+});
+var p2 = new Promise(function(resolve, reject) {
+    setTimeout(resolve, 100, "2");
+});
+
+Promise.race([p1, p2]).then(function(value) {
+  console.log(value);
+});
+```
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+### Задача
+
+```ts
+
+const p = new Promise((_, reject) => {
+    setTimeout(() => {
+        console.log('reject');
+        reject();
+    }, 2000)
+})
+
+p.then(
+    () => console.log('10'),
+    () => console.log('11'),
+).then(
+    () => console.log('13'),
+    () => console.log('14'),
+)
+
+p.then(
+    () => console.log('18'),
+    () => console.log('19'),
+)
+p.then(
+    () => console.log('23'),
+    () => console.log('24'),
+)
+```
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+

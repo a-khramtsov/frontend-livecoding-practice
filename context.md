@@ -245,3 +245,47 @@ console.log('sound' in myDog); // true
  ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
+### Задача
+
+Что будет выведено в консоль?
+
+```ts
+class Fruit {}
+
+Object.assign(Fruit.prototype, {
+    color: 'red',
+    names: [],
+    addName (name) {
+        this.names.push(name)
+        
+    }
+})
+
+const fruit1 = new Fruit();
+const fruit2 = new Fruit();
+
+fruit1.color = 'yellow';
+
+fruit1.addName('banana')
+fruit1.addName('coconut')
+
+console.log('20:', fruit1.color, fruit2.color)
+console.log('21:', fruit1.names, fruit2.names)
+
+delete fruit2.names;
+
+console.log('24:', fruit2.names, Fruit.prototype.names)
+
+fruit2.names = []
+fruit2.addName('apple')
+
+console.log('29:', fruitl.names, fruit2.names)
+
+console.log('31:', Fruit.prototype)
+console.log('32:', Fruit.prototype.constructor)
+console.log('33:', Fruit.prototype.constructor.prototype)
+console.log('34:', Fruit.prototype.constructor.prototype.prototype)
+```
+
+---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
