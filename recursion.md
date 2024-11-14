@@ -533,7 +533,9 @@ console.log(' ORIG: ', JSON.stringify(a), '\n\n', 'COPY: ', JSON.stringify(b));
   ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
-### Задача
+### ✅ 📹 Задача
+
+[Видеообъяснение](https://youtu.be/oulYDWDxa5k)
 
 Нужно написать фунецию, которая отдает значение объекта с бесконечной вложеннотью по переданному пути 
 
@@ -550,11 +552,69 @@ const data = {
     }
 }
 
-function getKey(key,obj) {};
+function getKey(obj, key) {};
 
-getKey('key.key1.key2.key3', data);
+getKey(data, 'key.key1.key2.key3');
 
 ```
+
+<details>
+    <summary>Решение</summary>
+
+
+```ts
+const flatMap = (obj, prefix = '') => {
+    let result = {};
+
+    for (let key in obj) {
+        const newKey = prefix ? prefix + '.' + key : key;
+
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+            result = {
+                ...result,
+                ...flatMap(obj[key], newKey)
+            }
+        } else {
+            result[newKey] = obj[key];
+        }
+    }
+
+    return result;
+}
+
+function getKey(obj, key) {
+    const flatObj =  flatMap(obj);
+
+    return flatObj[key];
+}
+
+```
+
+или
+
+```ts
+function getKey(obj, key) {
+    const keyParts = key.split('.');
+
+    let acc = obj;
+
+    for (let i = 0; i < keyParts.length; i++) {
+        const current = keyParts[i];
+        const target = acc[current];
+
+        if (!target) {
+            return null;
+        }
+
+        acc = target;
+    }
+
+    return acc;
+}
+
+```
+
+</details>
 
   ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
