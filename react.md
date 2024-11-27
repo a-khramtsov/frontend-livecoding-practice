@@ -120,8 +120,6 @@ const ChildComponent = memo(({ count }: any) => {
 import React, { useState } from "react";
 import ReactDOM, { createPortal } from "react-dom";
 
-
-
 const App = () => {
   const [input, setInput] = useState("");
   const [count, setCount] = useState(0);
@@ -972,4 +970,428 @@ export const App = () => {
 
 ___
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
- 
+
+
+### ✅ 📹 Задача
+
+[Видеообъяснение](ССЫЛКА)
+
+1. Добавление любого количества инпутов по кнопке  
+2. Во время ввода во всех инпутах производить валидацию
+
+Если input value везде "react", то кнопка "Сохранить" должна стать disabled={false}
+
+```tsx
+import React from "react";
+
+const validate = (item: string) => item === "react";
+
+export const App = () => {
+  return (
+    <form>
+      <input 
+        type="text" 
+        className="input" 
+        defaultValue="vue"
+      />
+      <input 
+        type="text" 
+        className="input" 
+        defaultValue="angular"
+      />
+      <div className="controls">
+        <button
+          className="button"
+          type="button"
+        >
+          Добавить инпут
+        </button>
+        <button
+          className="button"
+          type="button"
+          disabled={true}
+        >
+          Сохранить
+        </button>
+      </div>
+    </form>
+  );
+};
+
+```
+
+<details>
+<summary>Решение</summary>
+
+```tsx
+const validate = (item) => item === "react";
+
+export const App = () => {
+    const [inputs, setInputs] = useState({});
+
+    const handleAdd = useCallback(() => {
+        setInputs((prev) => {
+            const keysAmount = Object.keys(prev).length;
+
+            return {
+                ...prev,
+                [keysAmount + 1]: ''
+            }
+        });
+    }, [])
+
+    const handleInputChange = useCallback((id, value) => {
+        setInputs((prev) => {
+            return {
+                ...prev,
+                [id]: value,
+            }
+        })
+    }, []);
+
+    const isCorrectValidation = useMemo(() => {
+        const values = Object.values(inputs);
+
+        return values.every(validate) && values.length > 0;
+    }, [inputs]);
+
+    return (
+        <form>
+            {Object.entries(inputs).map(([key, value]) => (
+                <input
+                    key={key}
+                    type="text"
+                    className="input"
+                    value={value.toString()}
+                    onChange={(event) => handleInputChange(key, event.target.value)}
+                />
+            ))}
+
+            <div className="controls">
+                <button
+                    className="button"
+                    type="button"
+                    onClick={handleAdd}
+                >
+                    Добавить инпут
+                </button>
+                <button
+                    className="button"
+                    type="button"
+                    disabled={!isCorrectValidation}
+                >
+                    Сохранить
+                </button>
+            </div>
+        </form>
+    );
+};
+
+
+```
+
+</details>
+
+___
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+### ✅ 📹 Задача
+
+[Видеообъяснение](ССЫЛКА)
+
+В приведенной задаче рассматриваем компонент для отображения списка файлов и папок.
+
+Вам необходимо
+- Дополнить интерфейсы компонента Tree согласно приведенному примеру принимаемого типа данных data
+- Избавиться от any там, где это возможно 
+- Написать реализацию отображения элементов списка с раскрывающимися дочерними элементами по клику на иконку папки. 
+- По умолчанию папка имеет иконку "folder-close", меняющуюся на "folder-open" после раскрытия элементов 
+- Написать функцию для отображения иконок файлов в зависимости от их расширения (.tsx, .js). Остальные файлы имеют иконку "file"
+- Написать коллбеки onSelect и onExpand для обработки событий выбора элемента и раскрытия/закрытия папки
+
+
+![Demo](resources/folders/demo.gif)
+
+
+```tsx
+// App.tsx
+
+import "./styles.css";
+
+const data = [
+    {
+        id: 1,
+        name: "node_modules",
+        children: [
+            {
+                id: 2,
+                name: "storybook",
+                children: [
+                    {
+                        id: 3,
+                        name: "index.js",
+                    },
+                    {
+                        id: 4,
+                        name: "package.json",
+                    },
+                    {
+                        id: 5,
+                        name: "README.md",
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        id: 6,
+        name: "public",
+        children: [
+            {
+                id: 7,
+                name: "index.html",
+            },
+        ],
+    },
+    {
+        id: 8,
+        name: "src",
+        children: [
+            {
+                id: 9,
+                name: "App.tsx",
+            },
+            {
+                id: 10,
+                name: "index.tsx",
+            },
+        ],
+    },
+    {
+        id: 11,
+        name: "package.json",
+    },
+    {
+        id: 12,
+        name: "README.md",
+    },
+    {
+        id: 13,
+        name: "tsconfig.json",
+    },
+];
+
+export const Tree = () => {
+    return <div className="tree"></div>;
+};
+
+export default function App() {
+    return <Tree />;
+}
+
+
+```
+
+
+```css
+#style.css
+.icon {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    width: 1rem;
+    height: 1rem;
+}
+
+.icon svg {
+    display: block;
+    position: absolute;
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.tree > {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.list {
+    display: flex;
+}
+
+.icon-button {
+    outline: none;
+    border: none;
+    background: none;
+}
+
+```
+
+
+<details>
+<summary>Решение</summary>
+
+```tsx
+import React, { useState, memo } from "react";
+import type { FC } from "react";
+
+import "./styles.css";
+
+export type TreeNode = {
+  id: number;
+  name: string;
+  children?: TreeNode[];
+};
+
+const data: TreeNode[] = [
+  {
+    id: 1,
+    name: "node_modules",
+    children: [
+      {
+        id: 2,
+        name: "storybook",
+        children: [
+          {
+            id: 3,
+            name: "index.js",
+          },
+          {
+            id: 4,
+            name: "package.json",
+          },
+          {
+            id: 5,
+            name: "README.md",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 6,
+    name: "public",
+    children: [
+      {
+        id: 7,
+        name: "index.html",
+      },
+    ],
+  },
+  {
+    id: 8,
+    name: "src",
+    children: [
+      {
+        id: 9,
+        name: "App.tsx",
+      },
+      {
+        id: 10,
+        name: "index.tsx",
+      },
+    ],
+  },
+  {
+    id: 11,
+    name: "package.json",
+  },
+  {
+    id: 12,
+    name: "README.md",
+  },
+  {
+    id: 13,
+    name: "tsconfig.json",
+  },
+];
+
+interface TreeProps {
+  items: TreeNode[];
+}
+
+const getIsFolder = (node: TreeNode): boolean => {
+  return Boolean(node.children);
+};
+
+const getIcon = (node: TreeNode, isExpanded: boolean) => {
+  const isFolder = getIsFolder(node);
+
+  if (isFolder) {
+    return isExpanded ? "[Папка открыта]" : "[Папка]";
+  }
+
+  const iconsByExtension = {
+    js: "[JS]",
+    tsx: "[TSX]",
+  };
+
+  const extension = node.name.split(".").pop() as keyof typeof iconsByExtension;
+
+  if (Object.keys(iconsByExtension).includes(extension)) {
+    return iconsByExtension[extension];
+  }
+
+  return "[Файл]";
+};
+
+export const Tree: FC<TreeProps> = memo(({ items }) => {
+  const [expanded, setExpanded] = useState<Set<number>>(new Set());
+
+  const handleExpand = (id: number) => {
+    let newSet = new Set(expanded);
+
+    if (expanded.has(id)) {
+      newSet.delete(id);
+    } else {
+      newSet.add(id);
+    }
+
+    setExpanded(newSet);
+  };
+
+  return (
+    <ul className="tree">
+      {items.map((item) => {
+        const isFolder = getIsFolder(item);
+        const isExpanded = expanded.has(item.id);
+
+        const iconText = getIcon(item, isExpanded);
+
+        return (
+          <li key={item.id}>
+            <button
+              className="icon-button"
+              type="button"
+              onClick={() => handleExpand(item.id)}
+            >
+              {iconText}
+            </button>
+
+            <span>{item.name}</span>
+            {isFolder && null}
+            <div className="list">
+              {isExpanded && <Tree items={item.children || []} />}
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  );
+});
+
+export default function App() {
+  return <Tree items={data} />;
+}
+
+```
+
+</details>
