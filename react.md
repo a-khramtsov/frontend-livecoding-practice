@@ -5,7 +5,7 @@
 
 ## React
 
-### 📹 Задача
+### ✅ 📹 Задача
 [Видеообъяснение](https://youtu.be/trYp_1AlrPM)
 
 Выполнить рефакторинг
@@ -52,6 +52,77 @@ const Modal: React.FC<IProps> = props => {
     );
 };
 ```
+
+<details>
+    <summary>Решение</summary>
+
+```tsx
+import React, { useState, useEffect, useCallback } from "react";
+
+const useScrollLock = (props) => {
+    const { isOpen } = props;
+
+    useEffect(() => {
+        if (isOpen) {
+            document.body.classList.add("overflow--hidden");
+        }  else {
+            document.body.classList.remove("overflow--hidden");
+        }
+    }, [isOpen])
+}
+
+const Modal = (props) => {
+    const { isOpen, title, onModalClose, onSubmit, children } = props;
+
+    useScrollLock({ isOpen });
+
+    const closeModal = useCallback(() => {
+        console.log(':: close');
+        onModalClose();
+    }, []);
+
+    if (!isOpen) {
+        return null;
+    }
+
+    return (
+        <div className="fade" onClick={closeModal}>
+            <div className="modal">
+                <div className="header">
+                    <h3 className="title">{title}</h3>
+                    <button onClick={closeModal}>Close</button>
+                </div>
+                <div className="content">{children}</div>
+                <div className="footer">
+                    <button type="button" onClick={onSubmit}>
+                        Submit
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    )
+}
+
+// Использование
+const App = () => {
+    const [isOpen, setIsOpen] = useState(true);
+
+    const handleClose = useCallback(() => {
+        setIsOpen(false);
+    }, [])
+
+    return (
+        <Modal
+            isOpen={isOpen}
+            title="Modal"
+            onModalClose={handleClose}
+            onSubmit={() => {}}
+        />
+    )
+}
+```
+</details>
 
  ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
@@ -308,9 +379,8 @@ export default Clock;
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
 
-### Задача
-[TODO] ЗАГРУЗИТЬ ВИДЕО  
-[Видеообъяснение и решение](https://youtu.be/z-rBnJK8_no?si=ee-Rd8DkOYIF5SW4&t=3745)  
+### ✅ 📹 Задача
+[Видеообъяснение и решение](https://youtu.be/W7OClH2WxnM)  
 В файле 2 задачи: получение списка и работа с таймером. Нужно провести ревью кода и пофиксить все проблемы
 
 ```ts
@@ -722,7 +792,7 @@ ___
 ### ✅ Задача
 В задании приведен эмулятор вызова запроса с бекенда. 
 При нажатии на fetch success выводится "Request success" и "Success from App"
-При нажатии на fetch failt выводится "Request fail" "Success from App"
+При нажатии на fetch fail выводится "Request fail" "Success from App"
 
 1. Исправить баг показа лоадера. Сейчас он показвыается постоянно, а нужно только при получении запроса
 2. Сделать так, чтоб при нажатии на success было 2 success'а, а при нажатии на fail было 2 fail'a
@@ -858,7 +928,9 @@ export const useGetSomething = () => {
 ___
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
-### ✅ Задача
+### ✅ 📹 Задача
+[Видеообъяснение](ССЫЛКА)
+
 Есть обычная модалка с react-modal - принимает в себя children и решерит контен
 Имея эту реализацию нужно реализовать ModalWithRender применяя механиз renderProps
 
@@ -914,7 +986,7 @@ export const App = () => {
 <details>
 <summary>Решение</summary>
     
-```ts
+```tsx
 import { useState, PropsWithChildren } from "react";
 import Modal from "react-modal";
 
@@ -974,7 +1046,7 @@ ___
 
 ### ✅ 📹 Задача
 
-[Видеообъяснение](ССЫЛКА)
+[Видеообъяснение](https://youtu.be/8g21haopLbY)
 
 1. Добавление любого количества инпутов по кнопке  
 2. Во время ввода во всех инпутах производить валидацию
@@ -1098,7 +1170,7 @@ ___
 
 ### ✅ 📹 Задача
 
-[Видеообъяснение](ССЫЛКА)
+[Видеообъяснение](https://youtu.be/8g21haopLbY)
 
 В приведенной задаче рассматриваем компонент для отображения списка файлов и папок.
 
@@ -1395,3 +1467,116 @@ export default function App() {
 ```
 
 </details>
+
+
+___
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+### ✅ 📹 Задача
+[Видеообъяснение](ССЫЛКА)
+
+При потере интернет соединения в процессе жизненного цикла компонента должно начаться ежесекундное логирование актуального значения `count`.
+
+```tsx
+const Component = () => {
+    const [items, setItems] = useState([])
+    const [count, setCount] = useState(0)
+
+    useLayoutEffect(() => {
+        window.addEventListener('offline', () => {
+            setInterval(() => {
+                console.log(count)
+            }, 1000)
+        })
+    })
+
+    const onClick = useCallback(() => {
+        setItems([
+            ...items,
+            { id: count + 1, title: new Date.getTime().toString() },
+        ])
+        setCount(count + 1)
+    })
+
+    return (
+        <>
+            <button onClick={() => onClick()}>Добавить</button>
+            <p>Всего :{count}</p>
+            {items.map((el) => {
+                <li>{el.title}</li>
+            })}
+        </>
+    )
+}
+```
+
+<details>
+    <summary>Решение</summary>
+
+```tsx
+import { useState, useEffect, useCallback, memo, useRef } from 'react'
+
+export const App = () => {
+    const [items, setItems] = useState([])
+    const [count, setCount] = useState(0)
+
+    const countRef = useRef(0)
+
+    useEffect(() => {
+        countRef.current = count;
+    }, [count]);
+
+    useEffect(() => {
+        let interval = null;
+
+        const func = () => {
+            interval = setInterval(() => {
+                console.log(countRef.current)
+            }, 1000)
+        }
+
+        window.addEventListener('offline', func);
+
+        return () => {
+            window.removeEventListener('offline', func);
+            clearInterval(interval);
+        }
+    }, [])
+
+    const onClick = useCallback(() => {
+        const newCount = count + 1;
+
+        setItems((items) => {
+            return [
+                ...items,
+                { id: newCount, title: new Date().getTime().toString() },
+            ]
+        })
+        setCount(newCount)
+    }, [count])
+
+    return (
+        <>
+            <Button onClick={onClick}>CLICK</Button>
+            <p>Всего :{count}</p>
+            {Boolean(items.length) && (
+                <ul>
+                    {items.map((el) => <li key={el.title}>{el.title}</li>)}
+                </ul>
+            )}
+        </>
+    )
+}
+
+const Button = memo((props) => {
+    return (
+        <button {...props}>{props.children}</button>
+    )
+});
+```
+</details>
+
+
+___
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->

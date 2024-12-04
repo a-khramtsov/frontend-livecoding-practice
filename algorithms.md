@@ -305,11 +305,11 @@ console.log(func(longArr1, longArr2))
 ```ts
 const checkBrackets = (str) => {}
 
-console.log(checkBrackets('[[((]]))'))
-console.log(checkBrackets('[)'))
-console.log(checkBrackets('))[[()()]]'))
-console.log(checkBrackets('[[]](((([[]]))))'))
-console.log(checkBrackets('[]'))
+console.log(checkBrackets('[[((]]))'));
+console.log(checkBrackets('[)'));
+console.log(checkBrackets('))[[(<>)()]]'));
+console.log(checkBrackets('[[<<>>]](((([[]]))))'));
+console.log(checkBrackets('([])'));
 
 ```
 
@@ -317,13 +317,41 @@ console.log(checkBrackets('[]'))
   <summary>Решение</summary>
 
 ```ts
-const checkBrackets = (str) => {}
+const brackets = {
+    '[': ']',
+    '<': '>',
+    '{': '}',
+    '(': ')'
+};
 
-console.log(checkBrackets('[[((]]))'))
-console.log(checkBrackets('[)'))
-console.log(checkBrackets('))[[()()]]'))
-console.log(checkBrackets('[[]](((([[]]))))'))
-console.log(checkBrackets('[]'))
+const checkBrackets = str => {
+    const stack = [];
+
+    const array = Array.from(str);
+
+    const bracketKeys = Object.keys(brackets);
+    const bracketValues = Object.values(brackets);
+    console.log(array)
+
+    for (let bracket of array) {
+        if (bracketKeys.includes(bracket)) {
+            stack.push(bracket);
+        } else if (bracketValues.includes(bracket) && brackets[stack[stack.length - 1]] === bracket) {
+            stack.pop()
+        } else {
+            return false
+        }
+    }
+
+
+    return stack.length === 0;
+}
+
+console.log(checkBrackets('[[((]]))'));
+console.log(checkBrackets('[)'));
+console.log(checkBrackets('))[[(<>)()]]'));
+console.log(checkBrackets('[[<<>>]](((([[]]))))'));
+console.log(checkBrackets('([])'));
 
 ```
 </details>
@@ -334,7 +362,6 @@ console.log(checkBrackets('[]'))
 
 ### ✅ 📹 Задача
 [Видеообъяснение](https://youtu.be/PRvxs8rxC30)
-
 
 Дан неотсортированный массив уникальных чисел и число.
 Необходимо вернуть массив из кортежей пар чисел массива, если их сумма равна исходному числу и вернуть пустой массив, если таких пар нет.

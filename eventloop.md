@@ -349,3 +349,45 @@ reject
  ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
+### ✅ 📹 Задача
+
+Что будет выведено в консоль?
+
+[Видеообъяснение](ССЫЛКА)
+
+```ts
+setTimeout(() => {
+    console.log('setTimeout 100');
+    new Promise(resolve => {
+            setTimeout(resolve, 1000)
+        })
+        .then(() => {
+            console.log('sleep 1000 then');
+        });
+}, 100);
+
+const promise = new Promise(resolve => {
+    console.log('in promise');
+    resolve('Promise then');
+});
+
+new Promise(resolve => {
+        setTimeout(resolve, 500)
+    })
+    .then(() => {
+        console.log('sleep 2000 then');
+    })
+    .finally(() => {
+        console.log('sleep 2000 finally');
+        setTimeout(() => {
+            console.log('finally setTimeout 1000');
+        }, 1000);
+    });
+
+console.log('log1');
+promise.then(res => console.log(res));
+```
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
