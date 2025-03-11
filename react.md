@@ -267,16 +267,17 @@ const ChildComponent = memo(({ count, increment }) => {
 ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
- 
-### Задача
-https://codesandbox.io/p/devbox/trusting-edison-forked-tmkyk4?file=%2Fsrc%2FApp.tsx%3A53%2C1
+
+### ✅ 📹 Задача
+[Видеообъяснение](https://youtu.be/zjUUrJo72-0?si=2rADM11ZK4QXhenv)
 
 1) Типизировать данные из файла data/data.json
 2) Написать функцию, которая вернёт промис, который зарезолвится через 2 секунды с данными из data/data.json
 3) Вывести на интерфейс названия полученных элементов в виде дерева (у каждого следующего уровня должен быть бОльший отступ слева)
 4) Реализовать поиск по дереву (если дочерний элемент удовлетворяет условиям поиска, то должен отобразиться он и все его родители)
 5) Добавить в поиск функцию debounce
- ```js
+
+```tsx
 Название один
 Второе название
     Винни-Пух
@@ -290,6 +291,110 @@ https://codesandbox.io/p/devbox/trusting-edison-forked-tmkyk4?file=%2Fsrc%2FApp.
     Раскалённая лава
 Пяточок
 ```
+ ```tsx
+import React from "react";
+import data from './data.json';
+
+export default function App() {
+    return (
+        <div>
+
+        </div>
+    );
+}
+```
+
+
+<details>
+    <summary>Решение</summary>
+
+```tsx
+import React, { useState, useEffect, useMemo } from "react";
+import data from './data.json';
+
+interface TreeItem {
+  id: number;
+  name: string;
+  child?: TreeItem[];
+}
+
+const delay = (timeout: number) => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+}
+
+const getDataFromBackend = async () => {
+  await delay(2000);
+  return data;
+}
+
+type Props = {
+  tree: TreeItem[];
+}
+
+const useDebounce = (value: string, timeout: number) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value)
+    }, timeout);
+
+    return () => {
+      clearTimeout(timer);
+    }
+  }, [value, timeout]);
+
+  return debouncedValue;
+}
+
+const Tree = ({ tree }: Props) => {
+  if (!tree.length) {
+    return null;
+  }
+
+  return (
+      <div style={{ marginLeft: '40px' }}>
+        {tree.map((item) => (
+            <div key={item.id}>
+              <p>{item.name}</p>
+              <Tree tree={item.child || []} />
+            </div>
+        ))}
+      </div>
+  )
+}
+
+const searchInTree = (tree: TreeItem[], search: string) => tree.filter(el => el.name.includes(search));
+
+export default function App() {
+  const [tree, setTree] = useState<TreeItem[]>([])
+
+  const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 1200);
+
+  const treeAfterSearch = useMemo(() => {
+    return searchInTree(tree, debouncedSearch)
+  }, [tree, debouncedSearch])
+
+  const getTree = async () => {
+    const tree = await getDataFromBackend();
+    setTree(tree);
+  }
+
+  useEffect(() => {
+    getTree();
+  }, [])
+
+  return (
+    <div>
+      <input value={search} onChange={e => setSearch(e.target.value)} />
+      <Tree tree={treeAfterSearch} />
+    </div>
+  );
+}
+
+```
+</details>
 
 ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->

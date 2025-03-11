@@ -391,3 +391,94 @@ promise.then(res => console.log(res));
  ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
+### ✅ 📹 Задача
+
+Что будет выведено в консоль?
+
+[Видеообъяснение](https://youtu.be/zjUUrJo72-0?si=2rADM11ZK4QXhenv)
+
+```js
+const a = 2;
+const b = 3;
+const c = 5;
+
+const promise = new Promise(res => res(a));
+
+setTimeout(() => {
+    console.log(b);
+}, 0);
+
+promise
+    .then(v => {
+        console.log(v);
+        return v * a;
+    })
+    .catch(() => {
+        console.log(v);
+    })
+    .finally(v => {
+        console.log(v);
+        return v * a;
+    })
+    .then(v => {
+        console.log(v);
+        return v * a;
+    });
+
+console.log(c);
+```
+
+<details>
+    <summary>Решение</summary>
+
+```js
+5
+2
+undefined
+4
+3
+
+```
+[Видеообъяснение](https://youtu.be/zjUUrJo72-0?si=2rADM11ZK4QXhenv)
+</details>
+
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+### ✅ 📹 Задача
+
+Что будет выведено в консоль?
+
+[Видеообъяснение](https://youtu.be/zjUUrJo72-0?si=2rADM11ZK4QXhenv)
+
+
+```js
+const myPromise = () => Promise.resolve("I have resolved!");
+
+function firstFunction() {
+    myPromise().then(res => console.log(res));
+    console.log('first');
+}
+
+async function secondFunction() {
+    console.log(await myPromise());
+    console.log('second');
+}
+
+firstFunction();
+secondFunction();
+```
+
+<details>
+    <summary>Решение</summary>
+
+```js
+first
+I have resolved!
+I have resolved!
+second
+```
+[Видеообъяснение](https://youtu.be/zjUUrJo72-0?si=2rADM11ZK4QXhenv)
+</details>

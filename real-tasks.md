@@ -336,6 +336,51 @@ console.log(groupBy(data, 'country', 'id'));
 ```
 </details>
 
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+### ✅ 📹 Задача
+[Видеообъяснение](https://youtu.be/zjUUrJo72-0?si=2rADM11ZK4QXhenv)
+
+```js
+// Задача: получить таблицу по ролям + totalWeight:
+// {
+//   'сталь': { ids: [ 'ab', 'cd', 'fg' ], totalWeight: 8 },
+//   'чугун': { ids: [ 'bc', 'de', 'ef' ], totalWeight: 11 },
+// }
+
+
+const goods = [
+    { id: 'ab', name: 'Имя-01', type: 'сталь', weight: 1 },
+    { id: 'bc', name: 'Имя-02', type: 'чугун', weight: 2 },
+    { id: 'cd', name: 'Имя-03', type: 'сталь', weight: 3 },
+    { id: 'de', name: 'Имя-04', type: 'чугун', weight: 4 },
+    { id: 'ef', name: 'Имя-05', type: 'чугун', weight: 5 },
+    { id: 'fg', name: 'Имя-06', type: 'сталь', weight: '4' },
+];
+```
+
+<details>
+   <summary>Решение</summary>
+
+```ts
+const result = goods.reduce((acc, cur) => {
+    const { id, type, weight } = cur;
+
+    if (!acc[type]) {
+        acc[type] = { ids: [], totalWeight: 0 };
+    }
+
+    acc[type].ids.push(id);
+    acc[type].totalWeight += Number(weight);
+
+    return acc;
+}, {})
+```
+</details>
+
+
 
  ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
@@ -490,6 +535,87 @@ const groupPlayersBySquad = (players) => {
 
 ```
 </details>
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+### ✅ 📹 Задача
+[Видеообъяснение](https://youtu.be/zjUUrJo72-0?si=2rADM11ZK4QXhenv)
+
+#### Задача 1
+Реализовать функцию getMoney для банкомата, выдавшего купюры.
+На входе сумма, на выходе объект с количеством купюр по каждому номинал, при этом банкомат должен выдать
+минимальное количество банкнот.
+
+Доступные номиналы: 50, 100, 500, 1000, 5000р
+
+```tsx
+const getMoney = (amount) => {
+    
+}
+
+console.log(getMoney(6200)) // { 5000: 1, 1000: 1, 500: 0, 100: 2, 50: 0 }
+```
+
+<details>
+   <summary>Решение</summary>
+
+```tsx
+function getMoney(amount) {
+    const nominals = [5000, 2000, 1000, 500, 100, 50];
+    const result = {};
+
+    for (let nominal of nominals) {
+        if (amount === 0) break;
+
+        const limit = limits[nominal];
+        const count = Math.min(Math.floor(amount / nominal));
+        amount = amount - (count * nominal);
+
+        if (count) {
+            result[nominal] = count;
+        }
+    }
+
+    return result;
+}
+```
+</details>
+
+
+#### Задача 2
+
+Добавить возмодность указывать, какие купюры есть в банкомате
+
+```js
+console.log(getMoney(6200, {5000: 0, 2000: 2, 1000: 7, 100: 5})) // {5000: 0, 1000: 6, 100: 2}
+```
+
+<details>
+   <summary>Решение</summary>
+
+```tsx
+function getMoney(amount, limits = {}) {
+    const nominals = [5000, 2000, 1000, 500, 100, 50];
+    const result = {};
+
+    for (let nominal of nominals) {
+        if (amount === 0) break;
+
+        const limit = limits[nominal];
+        const count = Math.min(Math.floor(amount / nominal), limit) || 0;
+        amount = amount - (count * nominal);
+
+        if (count) {
+            result[nominal] = count;
+        }
+    }
+
+    return result;
+}
+```
+</details>
+
 
  ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
