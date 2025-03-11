@@ -353,7 +353,7 @@ reject
 
 Что будет выведено в консоль?
 
-[Видеообъяснение](ССЫЛКА)
+[Видеообъяснение](https://www.youtube.com/watch?v=9_QYthJvZrw)
 
 ```ts
 setTimeout(() => {
