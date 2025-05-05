@@ -702,6 +702,374 @@ myEventEmitter.emit('greet', 'Bob'); // No output
  ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
+### ✅ 📹 Задача
+[Видеообъяснение](ССЫЛКА)
+
+- Написать базовый/простой стейт менеджер, который может работать независимо от React
+- Написать хуки для React для работы с этим стейт менеджером
+- Связать кнопку со счетчиком
+
+```tsx
+
+class Store {
+    
+}
+
+const useStore = () => {
+    
+}
+
+export default function App() {
+    const state = useStore(store);
+
+    const handleClick = () => {
+        
+    }
+    
+    return (
+        <div>
+            <div>Counter из React: {state.value}</div>
+            <button onClick={handleClick}>CLICK</button>
+        </div>
+    );
+}
+```
+
+
+<details>
+   <summary>Решение</summary>
+
+```tsx
+import { useEffect, useState } from "react";
+
+class Store {
+    constructor(initialState) {
+        this.state = initialState;
+        this.subscribers = [];
+    }
+
+    getState() {
+        return this.state
+    }
+
+    setState(newState) {
+        const resultState = {
+            ...this.state,
+            ...newState,
+        }
+        this.state = resultState
+        this.subscribers.forEach(sub => {
+            sub(resultState)
+        })
+    }
+
+    subscribe(fn) {
+        this.subscribers.push(fn);
+    }
+
+    unsubscribe(fn) {
+        this.subscribers = this.subscribers.filter(subscriber => subscriber !== fn);
+    }
+}
+
+
+const store = new Store({ value1: 0, value2: 0 })
+
+const useStore = (store) => {
+    const [localState, setLocalState] = useState(store.getState())
+
+    useEffect(() => {
+        store.subscribe(setLocalState)
+
+        return () => store.unsubscribe();
+    }, [])
+
+    return localState;
+}
+
+export default function App() {
+    const state1 = useStore(store);
+    const state2 = useStore(store);
+
+    const handleClick1 = () => {
+        store.setState({ value1: state1.value1 + 1 });
+    }
+    const handleClick2 = () => {
+        store.setState({ value2: state2.value2 + 1 });
+    }
+
+    return (
+        <div>
+            <div>Counter из React: {state1.value1}</div>
+            <div>Counter из React: {state2.value2}</div>
+            <button onClick={handleClick1}>CLICK</button>
+            <button onClick={handleClick2}>CLICK</button>
+        </div>
+    );
+}
+
+```
+
+</details>
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+### ✅ 📹 Задача
+[Видеообъяснение](ССЫЛКА)
+
+
+```ts
+declare global {
+    var RendererFunc: RendererFunc
+}
+
+interface RendererFunc {
+    new(): RendererFunc
+    init: Function
+}
+
+
+export interface ConfInterface {
+    lang: string,
+    target: HTMLElement,
+    themeName: string,
+    onLogin: Function,
+    onRegister: Function
+}
+
+// Скрипт содержит экземпляр RendererFunc
+export function loadScript(callback) {
+    if (!document.getElementById('FOO_SCRIPT_ID')) {
+        const script = document.createElement('script')
+
+        script.id = 'FOO_SCRIPT ID'
+        script.src = 'https://foo.com/foo.script.js'
+
+        document.head.appendChild(script)
+        script.onload = callback
+
+        return
+    }
+
+    callback()
+}
+
+export function initScript (
+    lang: string,
+    frameKey: string,
+    onLogin: Function,
+    onRegister: Function,
+    stickyTop: number,
+    themeName: string,
+    optionsList: unknown,
+    onNavigation
+): any {
+    let target = document.getElementById( '#wrapper')
+    let options = [];
+
+    optionsList.forEach((i) => {
+        if (options.find(({code}) => code === i.id)) {
+            return;
+        }
+
+        const op = {
+            code: i.id,
+            label: i.cardType,
+            value: i.title,
+            dataTest: i.id
+        }
+
+        options.push(op);
+    });
+
+    const conf: ConfInterface = {
+        lang: lang,
+        onLogin: onLogin,
+        stickyTop: stickyTop ?? 70,
+        target,
+        themeName: themeName || 'defaultTheme',
+        options
+
+    }
+
+    function onNavigation(e?: any): void {
+        let url = '';
+
+        const name = e.pageName.toLowerCase();
+
+        if (name == 'detasils') {
+            url = '#events';
+        } else if (name === 'coming') {
+            url = '#calendar';
+        } else if (name == 'results') {
+            url = '#results'
+        } else if (name === 'live') {
+            url = '#live';
+        }
+
+        // Установка человекочитаемой ссылки
+        window.history.replaceState(null, '', url);
+    }
+
+    conf.onNavigation = onNavigation
+
+    if (onRegister) {
+        conf.onRegister = onRegister
+    }
+
+    if (window.RendererFunc && target) {
+        return new RendererFunc().init(conf);
+    }
+}
+```
+
+<details>
+   <summary>Решение</summary>
+
+```ts
+// types.ts
+interface OptionElement {
+    code: string;
+    label: string
+    value: string;
+    dataTest: string;
+}
+
+interface OptionListElement {
+    readonly id: string;
+    cardType: string
+    title: string
+}
+
+export interface ConfInterface {
+    lang: string,
+    target: HTMLElement,
+    themeName: string,
+    stickyTop: number;
+    onLogin: () => void,
+    onRegister: () => void
+    options: OptionElement[]
+}
+
+interface RendererFunc {
+    new(): RendererFunc
+    init: (config: ConfInterface) => void
+}
+
+declare global {
+    const RendererFunc: RendererFunc
+}
+
+// src/herlpers/script/load.ts
+const RENDERER_SCRIPT_ID = 'FOO_SCRIPT_ID';
+const RENDERER_SCRIPT_URL = 'https://foo.com/foo.script.js';
+
+// Скрипт содержит экземпляр RendererFunc
+export function loadScript(callback: VoidFunction) {
+    if (document.getElementById(RENDERER_SCRIPT_ID)) {
+        callback();
+        return;
+    }
+
+    const script = document.createElement('script')
+
+    script.id = RENDERER_SCRIPT_ID
+    script.src = RENDERER_SCRIPT_URL
+
+    document.head.appendChild(script)
+    script.onload = callback
+}
+
+
+const prepareOptions = (optionsList: OptionListElement[]): OptionElement[] => {
+    const optionsSet = new Set<string>();
+    const options: OptionElement[] = [];
+
+    for (let i = 0; i < optionsList.length; i++) {
+        const { id, title, cardType } = optionsList[i];
+
+        if (optionsSet.has(id)) {
+            continue;
+        }
+
+        optionsSet.add(id);
+
+        return {
+            code: id,
+            label: cardType,
+            value: title,
+            dataTest: id
+        }
+    }
+
+    return options;
+}
+
+const navigationMap = {
+    detasils: '#events',
+    coming: '#calendar',
+    results: '#results',
+    live: '#live',
+}
+
+function onNavlinkNavigation(e?: Event): void {
+    const name = e.pageName.toLowerCase();
+    const url = navigationMap[name] || '';
+
+    window.history.replaceState(null, '', url);
+}
+
+interface InitScriptParams {
+    lang: string,
+    stickyTop: number,
+    themeName: string,
+
+    optionsList: OptionListElement[],
+    onLogin: () => void,
+    onRegister?: () => void,
+    onNavigation: (event?: Event) => void
+}
+
+export function initScript (params: InitScriptParams) {
+    const {
+        lang,
+        stickyTop,
+        themeName,
+        optionsList = [],
+        onLogin,
+        onRegister,
+        onNavigation = onNavlinkNavigation,
+    } = params;
+
+    const target = document.getElementById( 'wrapper');
+
+    const conf: ConfInterface = {
+        lang,
+        target,
+        stickyTop: stickyTop ?? 70,
+        themeName: themeName || 'defaultTheme',
+        onLogin,
+        options: prepareOptions(optionsList),
+        onNavigation
+    }
+
+    if (onRegister) {
+        conf.onRegister = onRegister
+    }
+
+    if (window.RendererFunc && target) {
+        return new RendererFunc().init(conf);
+    }
+}
+```
+</details>
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
 
 ### ✅ 📹 Задача
 [Видеообъяснение](https://youtu.be/trYp_1AlrPM)

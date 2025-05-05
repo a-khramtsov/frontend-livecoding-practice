@@ -69,7 +69,7 @@ const var4: MYType = 25;
   <summary>Решение</summary>
 
 ```ts
-  type MYType = keyof obj // "name" |"age"
+  type MYType = keyof typeof obj // "name" |"age"
 ```
 </details>
 
