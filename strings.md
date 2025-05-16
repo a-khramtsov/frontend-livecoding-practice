@@ -164,3 +164,51 @@ console.log(capitalize('А роза упала на лапу Азора') === '�
  
  ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+### ✅ 📹 Задача
+[Видеообъяснение](ССЫЛКА_NEW)
+
+```ts
+// Проверить, что все элементы подстроки встречаются в строке в таком же порядке
+
+function needleInHaystack(substring, string) {
+   
+}
+
+console.log(needleInHaystack('whe', 'cartwheel')) // true
+console.log(needleInHaystack('crt', 'cartwheel')) // true
+console.log(needleInHaystack('ctr', 'cartwheel')) // false
+console.log(needleInHaystack('weee', 'cartwheel')) // false
+
+```
+
+<details>
+  <summary>Решение</summary>
+
+```ts
+function needleInHaystack(substring, string) {
+    let index = 0;
+    
+    for (let i = 0; i < string.length; i++) {
+        if (string.charAt(i) === substring.charAt(index)) {
+            index++;
+        }
+        if (index === substring.length) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+console.log(needleInHaystack('whe', 'cartwheel')) // true
+console.log(needleInHaystack('crt', 'cartwheel')) // true
+console.log(needleInHaystack('ctr', 'cartwheel')) // false
+console.log(needleInHaystack('weee', 'cartwheel')) // false
+
+```
+</details>
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->

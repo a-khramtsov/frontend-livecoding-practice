@@ -815,6 +815,330 @@ export default function App() {
  ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
+### ✅ 📹 Задача
+[Видеообъяснение](ССЫЛКА_NEW)
+
+Сагрегировать данные для страницы постов
+Список постов: https://jsonplaceholder.typicode.com/posts
+Список пользователей: https://jsonplaceholder.typicode.com/users
+Список комментариев: https://jsonplaceholder.typicode.com/comments
+
+```ts
+// Посты
+// [{
+//     "userId": 1,
+//     "id": 1,
+//     "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+//     "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+// }]
+
+// Комментарии
+//     [{
+//     "postId": 1,
+//     "id": 1,
+//     "name": "id labore ex et quam laborum",
+//     "email": "Eliseo@gardner.biz",
+//     "body": "laudantium enim quasi est quidem magnam voluptate ipsam eos\n tempora quo necessitatibus\ndolor quam autem quasi\nreiciendis et nam sapiente accusantium"
+// }]
+
+// Пользователи
+//     [{
+//     "id": 1,
+//     "name": "Leanne Graham",
+//     "username": "Bret",
+//     "email": "Sincere@april.biz",
+//     "phone": "1-770-736-8031"
+// }]
+
+// Выходной формат данных (посты):
+//     [{
+//     "id": 1, // id поста
+//     "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit", // title поста
+//     "userName": "Leanne Graham",
+//     "commentsCount": 10,
+// }]
+
+const getPosts = async () => {
+
+}
+
+getPosts();
+```
+
+<details>
+   <summary>Решение</summary>
+
+```ts
+const getPosts = async () => {
+   const requests = [
+      'https://jsonplaceholder.typicode.com/posts',
+      'https://jsonplaceholder.typicode.com/users',
+      'https://jsonplaceholder.typicode.com/comments'
+   ].map((url) => fetch(url));
+
+   const [posts, users, comments] = await Promise.all(requests);
+    
+    const commentsByPost = comments.reduce((res, comment) => {
+        if (!res[comment.postId]) {
+            res[comment.postId] = 0
+        }
+        res[comment.postId] += 1
+        return res
+    }, {})
+
+    const usersById = users.reduce((res, user) => {
+        res[user.id] = user.name
+        return res
+    }, {})
+
+    return posts.map(post => {
+        const commentsCount = commentsByPost[post.id] || 0
+        const userName = usersById[post.userId]
+        return {
+            id: post.id,
+            title: post.title,
+            userName,
+            commentsCount,
+        }
+    })
+}
+
+```
+
+</details>
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+### ✅ 📹 Задача
+[Видеообъяснение](ССЫЛКА_NEW)
+
+Реализовать очередь, позволяющую выполнить проверочный код
+Первым аргументом конструктора является функция — обработчик одной задачи, задача считается обработанной после вызова коллбэка
+Вторым — количество параллельно обрабатываемых задач
+Третьим — коллбек, вызываемый по окончанию обработки всех задач
+
+```ts
+class Queue {
+    
+}
+
+const processTask = (task, resolve) => {
+  // время обработки задачи от 500 до 1000мс
+  const workTime = 500 + Math.floor(Math.random() * 500)
+
+  setTimeout(() => {
+    console.log(task)
+    resolve()
+  }, workTime)
+}
+
+const paralleledTasks = 2
+const whenEmpty = () => console.log('Queue is empty')
+
+const queue = new Queue(processTask, paralleledTasks, whenEmpty)
+
+queue.add('task 1')
+queue.add('task 2')
+queue.add('task 3')
+queue.start()
+
+/*
+example output:
+task 2
+task 1
+task 3
+Queue is empty
+
+* поскольку задачи обрабатываются
+* разное количество времени, то при
+* paralleledTasks > 1 вывод может быть
+* не последовательным как тут: сначала
+* успела выполниться task 2, а потом task 1
+*/
+
+```
+
+<details>
+   <summary>Решение</summary>
+
+```ts
+
+class Queue {
+    constructor(processTask, paralleledTasks, endCb) {
+        this.tasks = [];
+        this.workersNum = paralleledTasks;
+        this.endCb = endCb;
+        this.processTask = processTask;
+    }
+
+    add(task) {
+        this.tasks.push(task);
+    }
+
+    async runWorker() {
+        while (this.tasks.length > 0) {
+            const task = this.tasks.shift();
+            if (task) {
+                await new Promise(resolve => this.processTask(task, resolve));
+            }
+        }
+    }
+
+    async loop() {
+        if (this.tasks.length === 0) {
+            this.endCb();
+            return;
+        }
+
+        const workers = Array.from({ length: this.workersNum }, () => this.runWorker());
+        await Promise.all(workers);
+
+        this.endCb();
+    }
+}
+
+```
+</details>
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+### ✅ 📹 Задача
+[Видеообъяснение](ССЫЛКА_NEW)
+
+Реализовать функцию spyOn
+Функция должна позволять отслеживать вызовы оригинальной функции, не заменяя при этом её поведение.
+Похожую функцию можно встретить во фреймворках для написания тестов, например jest.spyOn.
+Для хранения аргументов отслеживаемых вызовов необходимо использовать массив calls.
+
+```ts
+
+function spyOn(obj, key) {
+  // Реализация
+}
+
+const person = {
+  firstName: '',
+  lastName: '',
+  update(fullName) {
+    const [firstName, lastName] = fullName.split(' ');
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+}
+
+const spy = spyOn(person, 'update');
+
+person.update('Иван Иванов');
+console.log(person.firstName, person.lastName); // Иван Иванов
+
+person.update('Пётр Петров');
+console.log(person.firstName, person.lastName); // Пётр Петров
+
+console.log(spy.calls); // [['Иван Иванов'], ['Пётр Петров']]
+
+```
+
+<details>
+   <summary>Решение</summary>
+
+```ts
+function spyOn(obj, key) {
+    const self = obj[key];
+    let calls = [];
+    obj[key] = function (...args) {
+        self.call(obj, ...args);
+        calls.push(args);
+    }
+
+    return {
+        calls,
+    }
+}
+```
+
+</details>
+   
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+### Задача
+[Видеообъяснение]()
+
+Реализовать функцию, возвращающую все свободные временные слоты для создания встречи нескольких участников.
+Функция должна вернуть все свободные слоты в промежутке от 0 до 24, общие для всех участников встречи.
+Все временные интервалы указаны в виде массива чисел [start, end], где start всегда меньше end.
+
+```ts
+function findFreeMeetingSlots(slots) {
+
+}
+
+console.log(findFreeMeetingSlots([
+    [[16, 18], [11, 12], [14, 15]], // занятые слоты участника 1
+    [[15, 17]],                     // занятые слоты участника 2
+    [[10, 13]]                      // занятые слоты участника 3
+]))
+// [[0, 10], [13, 14], [18, 24]]
+
+console.log(findFreeMeetingSlots([
+    [[11, 12.34], [14.54, 19], [19.3, 20]],   // занятые слоты участника 1
+    [[15.45, 16], [17, 19.10]],              // занятые слоты участника 2
+    [[10, 13]]                               // занятые слоты участника 3
+]))
+// [[0, 10], [13, 14.54], [19.13, 19.3], [20, 24]]
+```
+
+<details>
+   <summary>Решение</summary>
+
+```ts
+
+
+```
+
+</details>
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+### Задача
+[Видеообъяснение]()
+
+```ts
+
+// Дан массив коннектов, каждый содержит путь от от до до. Необходимо обойти все коннекты и построить самые длинные цепочки.
+// В рамках задачи считаем, что зацикленных путей быть не может.
+
+const connections = [
+    ['A', 'Z'], ['Z', 'K'], ['L', 'A'], ['L', 'O'],
+    ['J', 'E'], ['Z', 'J'], ['Q', 'E'], ['Y', 'L']
+]
+
+const result = [
+    ['Q', 'E'],
+    ['Y', 'L', 'A', 'Z', 'K'],
+    ['Y', 'L', 'A', 'Z', 'J', 'E'],
+    ['Y', 'L', 'O']
+]
+
+```
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+<details>
+    <summary>Решение</summary>
+    
+    ```ts
+    
+    ```
+</details>
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
 ### ✅ 📹 Задача
 [Видеообъяснение](ССЫЛКА)
