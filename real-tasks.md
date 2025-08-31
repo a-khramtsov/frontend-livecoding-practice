@@ -1095,8 +1095,38 @@ console.log(findFreeMeetingSlots([
    <summary>Решение</summary>
 
 ```ts
+function findFreeMettingSlots(slots) {
+  const sortedSlots = slots.flat().sort((a, b) => a[0] > b[0] ? 1 : -1);
 
+  /*
+    Получаем слоты, отсортированные по началу встречи:
+    [
+      [10, 13],
+      [11, 12],
+      [14, 15],
+      [15, 17],
+      [16, 18],
+    ]
+  */
 
+  const freeSlots = [];
+
+  // Заводим указатель, который указывает время окончания последнего занятого слота
+  let lastEnd = 0;
+
+  for (const slot of sortedSlots) {
+    if (lastEnd < slot[0]) {
+      freeSlots.push([lastEnd, slot[0]]);
+    }
+    lastEnd = Math.max(lastEnd, slot[1]);
+  }
+
+  if (lastEnd < 24) {
+    freeSlots.push([lastEnd, 24]);
+  }
+
+  return freeSlots;
+}
 ```
 
 </details>
@@ -1132,9 +1162,71 @@ const result = [
 <details>
     <summary>Решение</summary>
     
-    ```ts
-    
-    ```
+ ```ts
+ const getLongestChainedConnections = (connections: Array<[string, string]>): Array<Array<string>> => {
+   const {
+      connectionsByFrom,
+      connectionsByTo,
+   } = connections.reduce<{ connectionsByFrom: Record<string, Array<string>>, connectionsByTo: Record<string, Array<string>> }>((acc, [from, to]) => {
+      if (!acc.connectionsByFrom[from]) {
+         acc.connectionsByFrom[from] = []
+      }
+
+      if (!acc.connectionsByFrom[from].includes(to)) {
+         acc.connectionsByFrom[from].push(to)
+      }
+
+      if (!acc.connectionsByTo[to]) {
+         acc.connectionsByTo[to] = []
+      }
+
+      if (!acc.connectionsByTo[to].includes(from)) {
+         acc.connectionsByTo[to].push(from)
+      }
+
+      return acc
+   }, {
+      connectionsByFrom: {},
+      connectionsByTo: {},
+   })
+
+   const startedNodes = Object.keys(connectionsByFrom).reduce((acc, from) => {
+      if (!connectionsByTo[from]?.length) {
+         acc.push(from)
+      }
+      return acc
+   }, Array<string>())
+
+   const getChained = (acc: string[][], from: string, index: number): string[][] => {
+      if (connectionsByFrom[from]?.length) {
+         if (connectionsByFrom[from].length > 1) {
+            const copy = [...acc[index]]
+
+            connectionsByFrom[from].forEach((to, toIndex) => {
+               if (!toIndex) {
+                  const to = connectionsByFrom[from][0]
+                  acc[index].push(to)
+                  getChained(acc, to, index)
+               } else {
+                  const newIndex = acc.length
+                  acc[newIndex] = copy
+                  acc[newIndex].push(to)
+                  getChained(acc, to, newIndex)
+               }
+            })
+         } else {
+            const to = connectionsByFrom[from][0]
+            acc[index].push(to)
+            getChained(acc, to, index)
+         }
+      }
+
+      return acc
+   }
+
+   return startedNodes.reduce(getChained, startedNodes.map((n) => [n]))
+}
+ ```
 </details>
 
  ---

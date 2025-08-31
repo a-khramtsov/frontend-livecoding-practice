@@ -47,8 +47,8 @@ class Person {
 	}
 }
 
-console.log(pedro.getName()); // pedro создан с помощью класса Person, но у него в этот момент нет метода getName. Будет ош
-console.log(juan.getName()); // будет вызван метод getName и выведено поле name
+console.log(pedro.getName()); // pedro создан от нового прототипа, у которого уже присутствует метод getName - будет выведено поле name
+console.log(juan.getName()); // juan создан от старого прототипа, у которого не было конструктора, поэтому он не имеет метода getName - будет ошбика
 
 ```
 </details>
