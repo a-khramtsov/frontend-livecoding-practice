@@ -621,6 +621,63 @@ function getMoney(amount, limits = {}) {
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
 
+### ✅ 📹 Задача
+[Видеообъяснение](https://youtu.be/U1q4WlXm_0E)
+
+```ts
+// Что выведет консоль?
+const getDiscountedPrice = (initialPrice, discounts) => {
+    // это хелпер, не влияет на консольный вывод
+    return discounts.reduce(
+        (price, currentDiscount) => price * (100 - currentDiscount) / 100,
+        initialPrice,
+    );
+};
+
+let globalDiscount = 10;
+let regionalDiscount = { value: 20 };
+let promoDiscount = { value: 30 };
+
+const createDiscounter = (discount) => {
+    console.log(`создан дискаунтер, скидки: ${[globalDiscount, regionalDiscount.value, discount.value]}`);
+
+    return (price) => {
+        const discounts = [globalDiscount, regionalDiscount.value, discount.value];
+        console.log(`применение скидок: ${discounts}`);
+        return getDiscountedPrice(price, discounts);
+    };
+};
+
+const discounterA = createDiscounter(promoDiscount);
+// { value: 30 }
+// console.log(`создан дискаунтер, скидки: ${[10, 20, 30]}`);
+
+regionalDiscount = { value: 60 };
+promoDiscount = { value: 70 };
+
+const discounterB = createDiscounter(promoDiscount);
+// { value: 70 }
+// console.log(`создан дискаунтер, скидки: ${[10, 60, 70]}`);
+
+globalDiscount = 50;
+
+const discountedPriceA = discounterA(1000);
+//  console.log(`применение скидок: ${[50, 60, 30]}`);
+
+const discountedPriceB = discounterB(1000);
+//  console.log(`применение скидок: ${[50, 60, 70]}`);
+
+```
+
+<details>
+    <summary>Решение</summary>
+
+    Объяснение в видео
+</details>
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
 
 ### ✅ 📹 Задача
 [Видеообъяснение](https://youtu.be/U1q4WlXm_0E)
@@ -1064,7 +1121,7 @@ function spyOn(obj, key) {
  ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
-### Задача
+### ✅ 📹 Задача
 [Видеообъяснение]()
 
 Реализовать функцию, возвращающую все свободные временные слоты для создания встречи нескольких участников.
@@ -1134,6 +1191,55 @@ function findFreeMettingSlots(slots) {
  ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
+
+### Задача 
+
+Т-Банк. Очень похожа на прыдыдущую
+
+Условие: Дан массив интервалов stream, где каждый интервал представляет время подключения и отключения одного зрителя в формате [start, end]. Необходимо определить максимальное количество зрителей, которые одновременно находились в стриме.
+
+Требования:
+Интервалы считаются включительно (зритель активен в момент start и end)
+Если один зритель отключается в момент t, а другой подключается в тот же момент t, сначала учитываем отключение
+
+Вход: `[[1, 5], [2, 6], [3, 4]]`
+Выход: 3
+Вход: `[[10, 20], [15, 25], [20, 30]]`
+
+```ts
+function findMaxViewers(stream) {
+   
+}
+
+```
+
+<details>
+
+```ts
+function findMaxViewers(stream) {
+    const events = [];
+    for (const [start, end] of stream) {
+        events.push([start, 1]);
+        events.push([end + 1, -1]);
+    }
+
+    events.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+
+    let current = 0;
+    let max = 0;
+    for (const [time, delta] of events) {
+        current += delta;
+        max = Math.max(max, current);
+    }
+    return max;
+}
+```
+</details>
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
 ### Задача
 [Видеообъяснение]()
 
@@ -1157,7 +1263,6 @@ const result = [
 ```
 
  ---
- <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
 <details>
     <summary>Решение</summary>
@@ -1235,6 +1340,75 @@ const result = [
 ### ✅ 📹 Задача
 [Видеообъяснение](ССЫЛКА)
 
+Функция поиска вариантов перелета из точки А в точку Б. К примеру:
+- из СПБ можно улететь в Москву, Нижний Новгород и Стамбул
+- Из Москвы в Стамбул и Дубай
+- Из Стамбула в Пекин
+- Из Дубая в Пекин
+
+Нужно найти самый короткий маршрут из точки А в точку Б. Если ищем мартурт СПБ-Пекин, то будет СПБ-Стамбул-Пекин
+
+
+```ts
+const graph = {
+    A: ['B', 'D'],
+    B: ['C', 'N', 'Z'],
+    D: ['E', 'F'],
+    F: ['S'],
+};
+
+
+const findPath = (from, to, graph) => {
+   
+}
+
+console.log(findPath('A', 'N', graph)); // ['A', 'B', 'N']
+console.log(findPath('A', 'S', graph)); // ['A', 'D', 'F', 'S']
+console.log(findPath('B', 'S', graph)); // 'Flights not found'
+
+```
+
+<details>
+    <summary>Решение</summary>
+
+```ts
+const findPath = (from, to, graph) => {
+    if (!graph[from]) {
+        return 'Not found'
+    }
+    if (from === to) {
+        return [from];
+    }
+
+    const queue = [[from]];
+
+    while (queue.length) {
+        const path = queue.shift();
+        const last = path[path.length - 1];
+        const children = graph[last] || [];
+
+        for (let i = children.length - 1; i >= 0; i--) {
+            const child = children[i];
+            const newPath = [...path, child];
+
+            if (child === to) {
+                return newPath;
+            }
+
+            queue.push(newPath);
+        }
+    }
+
+    return 'Not found'
+}
+```
+</details>
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+### ✅ 📹 Задача
+[Видеообъяснение](ССЫЛКА)
 
 ```ts
 declare global {
@@ -1485,6 +1659,206 @@ export function initScript (params: InitScriptParams) {
  ---
  <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
+
+### ✅ 📹 Задача
+[Видеообъяснение](ССЫЛКА)
+
+Напишите функцию, которая обрабатывает загрузку JS-скрипта. При этом функция:
+- принимает на вход:
+    - src - URL загружаемого скрипта
+    - onSuccess - callback, который должен выполниться в случае успешной загрузки скрипта
+    - onError - callback, который должен выполниться в случае ошибки при загрузке скрипта
+- также функция принимает на вход selector для поиска HTML-элемента, в который нужно вставить скрипт
+- загружает скрипт после того, как построено DOM-дерево
+- возвращает промис, который приходит в одно из состояний:
+    - resolved - если скрипт успешно загрузился
+    - rejected - если произошла ошибка при загрузке скрипта.
+      В обоих случаях в теле промиса должен быть передан src
+
+```ts
+
+interface ScriptData {
+    src: string;
+    onSuccess(): void;
+    onError(): void;
+}
+
+
+const loadScript = (scriptData: ScriptData, selector) => {
+    
+};
+
+console.log('a');
+await loadScript({
+    script: 'https://cdn.clounflare/companyname/scriptname',
+    // onSuccess: () => GLOBAL.DO();
+}, '#root')
+console.log('b');
+
+```
+
+<details>
+    <summary>Решение</summary>
+
+```ts
+const loadScript = (scriptData, selector) => {
+    return new Promise((resolve, reject) => {
+        document.addEventListener('DOMContentLoaded', () => {
+            const element = document.querySelector(selector);
+
+            if (!element) {
+                scriptData.onError()
+                reject();
+            }
+
+            const script = document.createElement('script');
+            script.src = scriptData.src;
+
+            script.onload = () => {
+                scriptData.onSuccess()
+                resolve();
+            }
+
+            script.onerror = () => {
+                scriptData.onError()
+                reject();
+            }
+
+            element.append(script);
+        })
+    })
+};
+
+console.log('a');
+await loadScript({
+    script: 'https://cdn.clounflare/companyname/scriptname',
+    // onSuccess: () => GLOBAL.DO();
+}, '#root')
+console.log('b');
+
+```
+</details>
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+### ✅ 📹 Задача
+[Видеообъяснение]()
+
+Напишите поллер статуса ресурса, который должен:
+- итеративно запрашивать (поллить) данные с сервера по адресу, указанному в параметре url
+- передавать в POST-запросе JSON, в котором должен содержаться id запрашиваемого ресурса resourceId
+- передевать параметр authToken в заголовках для авторизации
+- получать ответ от сервера в виде JSON с полем status, который равен либо "processing", либо "done"
+- продолжать поллить, если status === "processing"
+- останавливать поллинг и вызывать коллбэк onSuccess, если status === "done"
+- вызывать коллбэк onError, если в процессе поллинга произошла ошибка
+
+
+```ts
+interface PollerOptions {
+    resourceId: string;
+    url: string;
+    authToken: string;
+    onSuccess(): void;
+    onError(): void;
+}
+
+type Poller = () => Promise<void>;
+
+const timeout = 500;
+
+const createStatusPoller =  (options) => {
+};
+
+
+const poller = createStatusPoller({
+    resourceId: '111',
+    url: 'https://google.com',
+    authToken: 'QWEQWKJEBQWKJEBJKQE',
+    onSuccess: console.log,
+    onError: console.log
+})
+
+poller();
+
+
+```
+
+
+<details>
+    <summary>Решение</summary>
+
+```ts
+interface PollerOptions {
+    resourceId: string;
+    url: string;
+    authToken: string;
+    onSuccess(): void;
+    onError(): void;
+}
+
+type Poller = () => Promise<void>;
+
+const timeout = 500;
+
+const createStatusPoller =  (options) => {
+    const {
+        resourceId,
+        url,
+        authToken,
+        onSuccess,
+        onError,
+    } = options;
+
+    return () => {
+        return new Promise((resolve, reject) => {
+            const fetchData = async () => {
+                const body = { resourceId };
+                const headers = { 'Authorization': 'Bearer ' + authToken }
+
+                try {
+                    const response = await fetch(url, { method: 'POST', body, headers });
+                    const { data  } = response.json();
+
+                    if (data.status === 'processing') {
+                        setTimeout(fetchData, timeout)
+                    }
+
+                    if (data.status === 'done') {
+                        resolve(data);
+                        onSuccess();
+                    }
+                } catch (error) {
+                    onError(error);
+                    reject();
+                }
+            }
+
+
+            fetchData();
+        });
+    }
+};
+
+
+const poller = createStatusPoller({
+    resourceId: '111',
+    url: 'https://google.com',
+    authToken: 'QWEQWKJEBQWKJEBJKQE',
+    onSuccess: console.log,
+    onError: console.log
+})
+
+poller();
+
+
+```
+</details>
+
+ ---
+ <!--  ------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
 
 ### ✅ 📹 Задача
